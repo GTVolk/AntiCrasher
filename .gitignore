@@ -1,0 +1,8 @@
+obj/x86/Release/DesignTimeResolveAssemblyReferencesInput.cache
+*.exe
+*.cache
+*.pdb
+*.manifest
+*.txt
+*.config
+*.bat
