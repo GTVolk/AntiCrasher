@@ -52,7 +52,7 @@ namespace AntiCrasher {
             int errNo = _ac.parseArguments(args);
             // Check success
             if (errNo != AntiCrasher.SUCCESS) {
-                Console.WriteLine("Usage error! Valid usage: anticrasher.exe [-title Window title] [-target Target description] protecting_file [protecting_file_params]");
+                Console.WriteLine("Usage error!\nValid usage: anticrasher.exe [-title Window title] [-target Target description] protecting_file [protecting_file_params]");
                 return errNo;
             }
             // Check and set title

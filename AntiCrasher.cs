@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
@@ -126,7 +125,16 @@ namespace AntiCrasher {
                     }
                     string ext = Path.GetExtension(a);
                     if (!String.IsNullOrEmpty(ext)) {
-                        if (this.ValidExtensions.Contains(ext)) {
+                        bool isContains = false;
+                        foreach(string vExt in this.ValidExtensions)
+                        {
+                            if (vExt == ext)
+                            {
+                                isContains = true;
+                                break;
+                            }
+                        }
+                        if (isContains) {
                             if (File.Exists(a)) {
                                 this.ExecFile = a;
                                 for(int k = i++; k < arguments.Length; k++) {
