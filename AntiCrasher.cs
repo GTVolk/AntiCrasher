@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
-namespace AntiCrasher {
-    class AntiCrasher {
+namespace AntiCrasher
+{
+    class AntiCrasher
+    {
         // Constants of result
         public const int SUCCESS = 0;
         public const int NO_ARGUMENTS = 1;
@@ -32,13 +34,14 @@ namespace AntiCrasher {
         /// <summary>
         ///  Constructor
         /// </summary>
-        public AntiCrasher() {
+        public AntiCrasher()
+        {
             this._title = "";
             this._target = "";
             this._visible = true;
             this._exec = "";
             this._params = new List<string>();
-            this._validExt = new string[] { ".bat", ".exe", ".cmd" , ".ps1" };
+            this._validExt = new string[] { ".bat", ".exe", ".cmd", ".ps1", ".sh" };
         }
 
         /// <summary>
@@ -93,40 +96,53 @@ namespace AntiCrasher {
         /// </summary>
         /// <param name="arguments">Arguments array</param>
         /// <returns>Code of success</returns>
-        public int parseArguments(string[] arguments) {
+        public int parseArguments(string[] arguments)
+        {
             if (arguments.Length < 1)
                 return NO_ARGUMENTS;
 
-            for(int i = 0; i < arguments.Length; i++) {
+            for (int i = 0; i < arguments.Length; i++)
+            {
                 string a = arguments[i];
 
-                if (!String.IsNullOrEmpty(a)) {
-                    if (a == "-title") {
+                if (!String.IsNullOrEmpty(a))
+                {
+                    if (a == "-title")
+                    {
                         i++;
-                        if (arguments.Length > i + 1) {
+                        if (arguments.Length > i + 1)
+                        {
                             this.Title = arguments[i];
                             continue;
-                        } else {
+                        }
+                        else
+                        {
                             return NOT_VALID_STRUCT;
                         }
                     }
-                    if (a == "-target") {
+                    if (a == "-target")
+                    {
                         i++;
-                        if (arguments.Length > i + 1) {
+                        if (arguments.Length > i + 1)
+                        {
                             this.Target = arguments[i];
                             continue;
-                        } else {
+                        }
+                        else
+                        {
                             return NOT_VALID_STRUCT;
                         }
                     }
-                    if (a == "-hidden") {
+                    if (a == "-hidden")
+                    {
                         this.isVisible = false;
                         continue;
                     }
                     string ext = Path.GetExtension(a);
-                    if (!String.IsNullOrEmpty(ext)) {
+                    if (!String.IsNullOrEmpty(ext))
+                    {
                         bool isContains = false;
-                        foreach(string vExt in this.ValidExtensions)
+                        foreach (string vExt in this.ValidExtensions)
                         {
                             if (vExt == ext)
                             {
@@ -134,23 +150,34 @@ namespace AntiCrasher {
                                 break;
                             }
                         }
-                        if (isContains) {
-                            if (File.Exists(a)) {
+                        if (isContains)
+                        {
+                            if (File.Exists(a))
+                            {
                                 this.ExecFile = a;
-                                for(int k = i++; k < arguments.Length; k++) {
+                                for (int k = i++; k < arguments.Length; k++)
+                                {
                                     this.ExecParams.Add(arguments[k]);
                                 }
                                 return SUCCESS;
-                            } else {
+                            }
+                            else
+                            {
                                 return NO_EXIST_EXEC_FILE;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             return NOT_VALID_EXEC_EXT;
                         }
-                    } else {
+                    }
+                    else
+                    {
                         return NOT_VALID_FILE_PATH;
                     }
-                } else {
+                }
+                else
+                {
                     return PARAM_IS_EMPTY;
                 }
             }
@@ -162,13 +189,19 @@ namespace AntiCrasher {
         /// </summary>
         /// <param name="isConsole">Is method can write to console</param>
         /// <returns>Code of success</returns>
-        public int runProcess(bool isConsole = false) {
-            do {
-                if (isConsole) {
-                    if (!String.IsNullOrEmpty(this.Target)) {
-                        Console.WriteLine(DateTime.Now + " " + this.Target +" is started");
-                    } else {
-                        Console.WriteLine(DateTime.Now + " " + this.ExecFile +" is started");
+        public int runProcess(bool isConsole = false)
+        {
+            do
+            {
+                if (isConsole)
+                {
+                    if (!String.IsNullOrEmpty(this.Target))
+                    {
+                        Console.WriteLine(DateTime.Now + " " + this.Target + " is started");
+                    }
+                    else
+                    {
+                        Console.WriteLine(DateTime.Now + " " + this.ExecFile + " is started");
                     }
                 }
 
@@ -176,45 +209,63 @@ namespace AntiCrasher {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = this.ExecFile;
                 startInfo.Arguments = String.Join(" ", this.ExecParams.ToArray());
-                if (!this.isVisible) {
+                if (!this.isVisible)
+                {
                     startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 }
 
-                try {
+                try
+                {
                     this._p = Process.Start(startInfo);
                     this._p.WaitForExit();
-                } catch(Exception e) {
-                    if (isConsole) {
+                }
+                catch (Exception e)
+                {
+                    if (isConsole)
+                    {
                         Console.WriteLine("Exception: " + e.Message);
                     }
                     return EXCEPTION_FAIL;
                 }
-                if (isConsole) {
-                    if (this._p.ExitCode > 0) {
-                        if (!String.IsNullOrEmpty(this.Target)) {
+                if (isConsole)
+                {
+                    if (this._p.ExitCode > 0)
+                    {
+                        if (!String.IsNullOrEmpty(this.Target))
+                        {
                             Console.WriteLine(DateTime.Now + " " + this.Target + " is closed with error code " + this._p.ExitCode + ". Restarting...");
-                        } else {
+                        }
+                        else
+                        {
                             Console.WriteLine(DateTime.Now + " " + this.ExecFile + " is closed with error code " + this._p.ExitCode + ". Restarting...");
                         }
-                       
-                    } else {
-                        if (!String.IsNullOrEmpty(this.Target)) {
+
+                    }
+                    else
+                    {
+                        if (!String.IsNullOrEmpty(this.Target))
+                        {
                             Console.WriteLine(DateTime.Now + " " + this.Target + " is closed. Exiting...");
-                        } else {
+                        }
+                        else
+                        {
                             Console.WriteLine(DateTime.Now + " " + this.ExecFile + " is closed. Exiting...");
                         }
-                        
+
                     }
                 }
-                Thread.Sleep(3000);     // Wait 3 seconds before restart!
+                Thread.Sleep(3000); // Wait 3 seconds before restart!
             }
             while (this._p.ExitCode > 0);
             return SUCCESS;
         }
 
-        public void cleanProcess() {
-            if (this._p != null) {
-                if (!this._p.HasExited) {
+        public void cleanProcess()
+        {
+            if (this._p != null)
+            {
+                if (!this._p.HasExited)
+                {
                     this._p.Kill();
                 }
             }
@@ -223,7 +274,8 @@ namespace AntiCrasher {
         /// <summary>
         /// Destructor, kills process if it still running in background
         /// </summary>
-        ~AntiCrasher() {
+        ~AntiCrasher()
+        {
             this.cleanProcess();
         }
     }

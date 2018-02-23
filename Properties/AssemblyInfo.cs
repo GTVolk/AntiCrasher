@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("AntiCrasher")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Prevents application from crashing")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("DevVault")]
 [assembly: AssemblyProduct("AntiCrasher")]
-[assembly: AssemblyCopyright("Copyright GTVolk©  2016")]
+[assembly: AssemblyCopyright("Copyright DevVault©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

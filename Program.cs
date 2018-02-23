@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace AntiCrasher {
-    class Program {
-
-        static bool exitSystem = false;
+namespace AntiCrasher
+{
+    class Program
+    {
 
         #region Trap application termination
         [DllImport("Kernel32")]
@@ -14,7 +14,8 @@ namespace AntiCrasher {
         static EventHandler _handler;
         static AntiCrasher _ac;
 
-        enum CtrlType {
+        enum CtrlType
+        {
             CTRL_C_EVENT = 0,
             CTRL_BREAK_EVENT = 1,
             CTRL_CLOSE_EVENT = 2,
@@ -22,9 +23,9 @@ namespace AntiCrasher {
             CTRL_SHUTDOWN_EVENT = 6
         }
 
-        private static bool Handler(CtrlType sig) {
+        private static bool Handler(CtrlType sig)
+        {
             Console.WriteLine("Exiting system due to external CTRL-C, or process kill, or shutdown");
-
 
             _ac.cleanProcess();
 
@@ -35,36 +36,45 @@ namespace AntiCrasher {
         }
         #endregion
 
-        public void Start() {
+        public void Start()
+        {
             // start a thread and start doing some processing
             Console.WriteLine("Thread started, processing..");
         }
 
-        static int Main(string[] args) {
+        static int Main(string[] args)
+        {
             // Create class instance
             _ac = new AntiCrasher();
 
-            // Some biolerplate to react to close window event, CTRL-C, kill, etc
+            // Some boilerplate to react to close window event, CTRL-C, kill, etc
             _handler += new EventHandler(Handler);
             SetConsoleCtrlHandler(_handler, true);
 
             // Parsing arguments
             int errNo = _ac.parseArguments(args);
             // Check success
-            if (errNo != AntiCrasher.SUCCESS) {
+            if (errNo != AntiCrasher.SUCCESS)
+            {
                 Console.WriteLine("Usage error!\nValid usage: anticrasher.exe [-title Window title] [-target Target description] protecting_file [protecting_file_params]");
                 return errNo;
             }
             // Check and set title
-            if (!String.IsNullOrEmpty(_ac.Title)) {
+            if (!String.IsNullOrEmpty(_ac.Title))
+            {
                 Console.Title = "Anti-crash " + _ac.Title;
-            } else {
+            }
+            else
+            {
                 Console.Title = "Anti-crasher";
             }
             // Check and set target
-            if (!String.IsNullOrEmpty(_ac.Target)) {
+            if (!String.IsNullOrEmpty(_ac.Target))
+            {
                 Console.WriteLine("Protecting " + _ac.Target + " from crashes...");
-            } else {
+            }
+            else
+            {
                 Console.WriteLine("Protecting " + _ac.ExecFile + " from crashes...");
             }
             // Anticrash process
