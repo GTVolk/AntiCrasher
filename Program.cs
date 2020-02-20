@@ -11,8 +11,8 @@ namespace AntiCrasher
         private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
 
         private delegate bool EventHandler(CtrlType sig);
-        static EventHandler _handler;
-        static AntiCrasher _ac;
+        static EventHandler eventHandler;
+        static AntiCrasher antiCrasher;
 
         enum CtrlType
         {
@@ -27,7 +27,7 @@ namespace AntiCrasher
         {
             Console.WriteLine("Exiting system due to external CTRL-C, or process kill, or shutdown");
 
-            _ac.cleanProcess();
+            antiCrasher.cleanProcess();
 
             //shutdown right away so there are no lingering threads
             Environment.Exit(-1);
@@ -45,40 +45,40 @@ namespace AntiCrasher
         static int Main(string[] args)
         {
             // Create class instance
-            _ac = new AntiCrasher();
+            antiCrasher = new AntiCrasher();
 
             // Some boilerplate to react to close window event, CTRL-C, kill, etc
-            _handler += new EventHandler(Handler);
-            SetConsoleCtrlHandler(_handler, true);
+            eventHandler += new EventHandler(Handler);
+            SetConsoleCtrlHandler(eventHandler, true);
 
             // Parsing arguments
-            int errNo = _ac.parseArguments(args);
+            int errNo = antiCrasher.parseCommandLineArguments(args);
             // Check success
-            if (errNo != AntiCrasher.SUCCESS)
+            if (errNo != AntiCrasher.RESULT_SUCCESS)
             {
                 Console.WriteLine("Usage error!\nValid usage: anticrasher.exe [-title Window title] [-target Target description] protecting_file [protecting_file_params]");
                 return errNo;
             }
             // Check and set title
-            if (!String.IsNullOrEmpty(_ac.Title))
+            if (!String.IsNullOrEmpty(antiCrasher.WindowTitle))
             {
-                Console.Title = "Anti-crash " + _ac.Title;
+                Console.Title = "Anti-crash " + antiCrasher.WindowTitle;
             }
             else
             {
                 Console.Title = "Anti-crasher";
             }
             // Check and set target
-            if (!String.IsNullOrEmpty(_ac.Target))
+            if (!String.IsNullOrEmpty(antiCrasher.TargetName))
             {
-                Console.WriteLine("Protecting " + _ac.Target + " from crashes...");
+                Console.WriteLine("Protecting " + antiCrasher.TargetName + " from crashes...");
             }
             else
             {
-                Console.WriteLine("Protecting " + _ac.ExecFile + " from crashes...");
+                Console.WriteLine("Protecting " + antiCrasher.ExecutablePath + " from crashes...");
             }
             // Anticrash process
-            return _ac.runProcess(true);
+            return antiCrasher.runProcess(true);
         }
     }
 }
