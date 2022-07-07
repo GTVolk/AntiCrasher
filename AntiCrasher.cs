@@ -74,6 +74,14 @@ namespace AntiCrasher
         /// <returns>Code of success</returns>
         public int parseCommandLineArguments(string[] arguments)
         {
+            // Property initialization
+            this.Process = null;
+            this.WindowTitle = "";
+            this.TargetName = "";
+            this.IsWindowVisible = true;
+            this.ExecutablePath = "";
+            this.ExecutableCommandLineParameters = new List<string>();
+
             if (arguments.Length < 1)
                 return RESULT_NO_ARGUMENTS;
 
@@ -131,8 +139,10 @@ namespace AntiCrasher
                         {
                             if (File.Exists(a))
                             {
+                                // Skip current exe as parameter
+                                int startIndex = i + 1;
                                 this.ExecutablePath = a;
-                                for (int k = i++; k < arguments.Length; k++)
+                                for (int k = startIndex++; k < arguments.Length; k++)
                                 {
                                     this.ExecutableCommandLineParameters.Add(arguments[k]);
                                 }
