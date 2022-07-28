@@ -45,6 +45,11 @@ namespace AntiCrasher
         public bool IsWindowVisible { get; set; }
 
         /// <summary>
+        /// Is executed process must be restarted always even if exit code 0
+        /// </summary>
+        public bool IsRestartAlways { get; set; }
+
+        /// <summary>
         /// Executable file path
         /// </summary>
         public string ExecutablePath { get; set; }
@@ -79,6 +84,7 @@ namespace AntiCrasher
             this.WindowTitle = "";
             this.TargetName = "";
             this.IsWindowVisible = true;
+            this.IsRestartAlways = false;
             this.ExecutablePath = "";
             this.ExecutableCommandLineParameters = new List<string>();
 
@@ -121,6 +127,11 @@ namespace AntiCrasher
                     if (a == "-hidden")
                     {
                         this.IsWindowVisible = false;
+                        continue;
+                    }
+                    if (a == "-always")
+                    {
+                        this.IsRestartAlways = true;
                         continue;
                     }
                     string ext = Path.GetExtension(a);
@@ -230,20 +241,33 @@ namespace AntiCrasher
                     }
                     else
                     {
-                        if (!String.IsNullOrEmpty(this.TargetName))
+                        if (this.IsRestartAlways)
                         {
-                            Console.WriteLine(DateTime.Now + " " + this.TargetName + " is closed. Exiting...");
-                        }
-                        else
+                            if (!String.IsNullOrEmpty(this.TargetName))
+                            {
+                                Console.WriteLine(DateTime.Now + " " + this.TargetName + " is gracefuly closed. Restarting...");
+                            }
+                            else
+                            {
+                                Console.WriteLine(DateTime.Now + " " + this.ExecutablePath + " is gracefuly closed. Restarting...");
+                            }
+                        } else
                         {
-                            Console.WriteLine(DateTime.Now + " " + this.ExecutablePath + " is closed. Exiting...");
+                            if (!String.IsNullOrEmpty(this.TargetName))
+                            {
+                                Console.WriteLine(DateTime.Now + " " + this.TargetName + " is gracefuly closed. Exiting...");
+                            }
+                            else
+                            {
+                                Console.WriteLine(DateTime.Now + " " + this.ExecutablePath + " is gracefuly closed. Exiting...");
+                            }
                         }
 
                     }
                 }
                 Thread.Sleep(3000); // Wait 3 seconds before restart!
             }
-            while (this.Process.ExitCode > 0);
+            while (this.IsRestartAlways || (this.Process.ExitCode > 0));
             return RESULT_SUCCESS;
         }
 

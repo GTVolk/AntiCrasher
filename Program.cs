@@ -65,6 +65,7 @@ namespace AntiCrasher
                     + "-title = Window title\n"
                     + "-target = If specified, then shows as protecting target in main window, otherwise executable path is shown\n"
                     + "-hidden = Should to hide executable window\n"
+                    + "-always = Should to restart app even if exit code 0\n"
                     + "executable = Main protecting executable\n"
                     + "params = Executable file params\n"
                     + ""
